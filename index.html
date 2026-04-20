@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SMASH & CO.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;700&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+</head>
+
+<body>
+  <!-- ═══ SVG ICON SPRITE ═══ -->
+  <svg xmlns="http://www.w3.org/2000/svg" style="position:absolute; width:0; height:0;" aria-hidden="true">
+    <defs>
+      <linearGradient id="g-amber" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#fde68a" />
+        <stop offset="100%" stop-color="#f59e0b" />
+      </linearGradient>
+      <linearGradient id="g-red" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#fca5a5" />
+        <stop offset="100%" stop-color="#ef4444" />
+      </linearGradient>
+      <linearGradient id="g-green" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#86efac" />
+        <stop offset="100%" stop-color="#22c55e" />
+      </linearGradient>
+      <linearGradient id="g-brown" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#d97706" />
+        <stop offset="100%" stop-color="#92400e" />
+      </linearGradient>
+      <linearGradient id="g-gold" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#fef3c7" />
+        <stop offset="100%" stop-color="#f59e0b" />
+      </linearGradient>
+      <linearGradient id="g-purple" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#e9d5ff" />
+        <stop offset="100%" stop-color="#a855f7" />
+      </linearGradient>
+      <linearGradient id="g-yellow" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#fef08a" />
+        <stop offset="100%" stop-color="#eab308" />
+      </linearGradient>
+    </defs>
+
+    <symbol id="ico-burger" viewBox="0 0 24 24">
+      <path d="M3 15c0 3 4 5 9 5s9-2 9-5H3z" fill="url(#g-amber)" />
+      <rect x="3" y="12" width="18" height="3" rx="1" fill="#92400e" />
+      <path d="M3 12c0-5 4-8 9-8s9 3 9 8H3z" fill="url(#g-amber)" />
+      <circle cx="7" cy="8" r=".9" fill="#fef3c7" opacity=".6" />
+      <circle cx="12" cy="6.5" r=".9" fill="#fef3c7" opacity=".6" />
+      <circle cx="17" cy="8" r=".9" fill="#fef3c7" opacity=".6" />
+      <rect x="4" y="12.5" width="16" height="1" rx=".5" fill="#22c55e" opacity=".7" />
+    </symbol>
+
+    <symbol id="ico-bread" viewBox="0 0 24 24">
+      <path d="M4 16V12c0-5 3.5-8 8-8s8 3 8 8v4c0 2-3 4-8 4s-8-2-8-4z" fill="url(#g-amber)" />
+      <path d="M4 12c0-5 3.5-8 8-8s8 3 8 8" fill="url(#g-gold)" stroke="#d97706" stroke-width=".3" />
+      <path d="M8 10c2-.8 6-.8 8 0" stroke="#d97706" stroke-width=".8" fill="none" stroke-linecap="round" />
+    </symbol>
+
+    <symbol id="ico-pineapple" viewBox="0 0 24 24">
+      <ellipse cx="12" cy="15" rx="5.5" ry="7" fill="url(#g-amber)" />
+      <line x1="7" y1="12" x2="17" y2="19" stroke="#d97706" stroke-width=".6" />
+      <line x1="8" y1="15" x2="15" y2="21" stroke="#d97706" stroke-width=".6" />
+      <line x1="17" y1="12" x2="7" y2="19" stroke="#d97706" stroke-width=".6" />
+      <line x1="16" y1="15" x2="9" y2="21" stroke="#d97706" stroke-width=".6" />
+      <path d="M12 8c-1-2-.5-4 .5-5.5.5 1.5 1.2 2 2 2.2-.5-1.5.2-3 1.5-4-.5 2.5 0 4-.8 5.3" fill="url(#g-green)" />
+      <path d="M12 8c1-2 .5-4-.5-5.5-.5 1.5-1.2 2-2 2.2.5-1.5-.2-3-1.5-4 .5 2.5 0 4 .8 5.3" fill="#4ade80" />
+    </symbol>
+
+    <symbol id="ico-cheese" viewBox="0 0 24 24">
+      <path d="M2 19L12 4l10 15H2z" fill="url(#g-yellow)" />
+      <circle cx="8" cy="16" r="1.5" fill="#fef9c3" opacity=".5" />
+      <circle cx="14" cy="14" r="1" fill="#fef9c3" opacity=".5" />
+      <circle cx="11" cy="18" r=".7" fill="#fef9c3" opacity=".5" />
+    </symbol>
+
+    <symbol id="ico-bacon" viewBox="0 0 24 24">
+      <path d="M3 9c2-3 4 3 6 0s4 3 6 0 4 3 6 0" stroke="#ef4444" stroke-width="3" fill="none" stroke-linecap="round" />
+      <path d="M3 15c2-3 4 3 6 0s4 3 6 0 4 3 6 0" stroke="#dc2626" stroke-width="3" fill="none"
+        stroke-linecap="round" />
+      <path d="M3 9c2-3 4 3 6 0s4 3 6 0 4 3 6 0" stroke="#fca5a5" stroke-width="1" fill="none" stroke-linecap="round"
+        opacity=".4" />
+    </symbol>
+
+    <symbol id="ico-meat" viewBox="0 0 24 24">
+      <ellipse cx="12" cy="12" rx="9" ry="7" fill="url(#g-red)" />
+      <ellipse cx="12" cy="10" rx="8" ry="5" fill="#fca5a5" opacity=".4" />
+      <path d="M7 11c2-1 5-1.5 8-.5" stroke="#fff" stroke-width=".7" fill="none" opacity=".3" stroke-linecap="round" />
+      <circle cx="15" cy="13" r="1.5" fill="#fca5a5" opacity=".3" />
+    </symbol>
+
+    <symbol id="ico-tomato" viewBox="0 0 24 24">
+      <circle cx="12" cy="13" r="8" fill="url(#g-red)" />
+      <path d="M8 6c1 1 2.5 1 4 0s2.5-1 4 0" stroke="#22c55e" stroke-width="1.5" fill="none" stroke-linecap="round" />
+      <line x1="12" y1="5" x2="12" y2="9" stroke="#22c55e" stroke-width="1.2" stroke-linecap="round" />
+      <path d="M6 12c3-1 5 1 6 0s3 1 6 0" stroke="#fca5a5" stroke-width=".5" fill="none" opacity=".3" />
+    </symbol>
+
+    <symbol id="ico-lettuce" viewBox="0 0 24 24">
+      <path d="M4 16c0-3 2-6 4-8 1 2 2 3 4 3s3-1 4-3c2 2 4 5 4 8 0 3-3 5-8 5s-8-2-8-5z" fill="url(#g-green)" />
+      <path d="M12 8v9M8 13c2-1 3 1 4 0s2-1 4 0" stroke="#16a34a" stroke-width=".8" fill="none"
+        stroke-linecap="round" />
+    </symbol>
+
+    <symbol id="ico-onion" viewBox="0 0 24 24">
+      <path d="M12 3c-1 2-6 5-6 11 0 4 3 7 6 7s6-3 6-7c0-6-5-9-6-11z" fill="url(#g-purple)" />
+      <path d="M12 4c-1 3-4 5-5 9" stroke="#e9d5ff" stroke-width=".6" fill="none" opacity=".5" />
+      <path d="M12 4c1 3 4 5 5 9" stroke="#e9d5ff" stroke-width=".6" fill="none" opacity=".5" />
+      <line x1="12" y1="4" x2="12" y2="2" stroke="#a855f7" stroke-width="1.2" stroke-linecap="round" />
+    </symbol>
+
+    <symbol id="ico-pickle" viewBox="0 0 24 24">
+      <rect x="7" y="4" width="10" height="16" rx="5" fill="url(#g-green)" />
+      <circle cx="10" cy="9" r="1" fill="#bbf7d0" opacity=".5" />
+      <circle cx="14" cy="13" r=".9" fill="#bbf7d0" opacity=".5" />
+      <circle cx="11" cy="16" r=".7" fill="#bbf7d0" opacity=".5" />
+    </symbol>
+
+    <symbol id="ico-sauce" viewBox="0 0 24 24">
+      <rect x="6" y="9" width="12" height="12" rx="2" fill="url(#g-brown)" />
+      <rect x="8" y="5" width="8" height="4" rx="1" fill="#d97706" />
+      <rect x="9" y="3" width="6" height="3" rx="1" fill="#92400e" />
+      <rect x="8" y="13" width="8" height="1.5" rx=".7" fill="#fbbf24" opacity=".3" />
+    </symbol>
+
+    <symbol id="ico-avocado" viewBox="0 0 24 24">
+      <path d="M12 2C7 2 4 8 4 13c0 5 3 9 8 9s8-4 8-9c0-5-3-11-8-11z" fill="url(#g-green)" />
+      <ellipse cx="12" cy="14" rx="3.5" ry="4.5" fill="#fef3c7" />
+      <circle cx="12" cy="14" r="2.2" fill="url(#g-brown)" />
+    </symbol>
+
+    <symbol id="ico-bellpepper" viewBox="0 0 24 24">
+      <path d="M7 10c-1 4-1 8 1 10 1 1 3 2 4 2s3-1 4-2c2-2 2-6 1-10H7z" fill="url(#g-green)" />
+      <path d="M7 10c0-2 2-4 5-4s5 2 5 4" fill="#4ade80" />
+      <rect x="11" y="3" width="2" height="5" rx="1" fill="#16a34a" />
+    </symbol>
+
+    <symbol id="ico-plant" viewBox="0 0 24 24">
+      <line x1="12" y1="22" x2="12" y2="10" stroke="#16a34a" stroke-width="2" stroke-linecap="round" />
+      <path d="M12 14c-4 0-7-3-7-7 3 0 6 2 7 5" fill="url(#g-green)" />
+      <path d="M12 10c4 0 6-2 6-6-3 0-5 2-6 4" fill="#4ade80" />
+    </symbol>
+
+    <symbol id="ico-chili" viewBox="0 0 24 24">
+      <path d="M14 5c3 0 5 3 5 6 0 5-4 9-7 11-1-2-2-4-2-6 0-4 1.5-8 4-11z" fill="url(#g-red)" />
+      <path d="M14 5c-1-1-1.5-2.5-.5-4 .8.5 1.3 1.5 1.5 3" stroke="#22c55e" stroke-width="1.5" fill="none"
+        stroke-linecap="round" />
+      <path d="M14 5c.5-1.5.5-3.5 1.5-4-.3 1-.7 2-1 3.5" stroke="#16a34a" stroke-width="1" fill="none"
+        stroke-linecap="round" />
+    </symbol>
+
+    <symbol id="ico-trophy" viewBox="0 0 24 24">
+      <path d="M7 4h10v7c0 3-2 5-5 5s-5-2-5-5V4z" fill="url(#g-gold)" />
+      <path d="M7 6H4c0 3 1.5 5 3 5" fill="#fbbf24" />
+      <path d="M17 6h3c0 3-1.5 5-3 5" fill="#fbbf24" />
+      <rect x="10" y="15" width="4" height="3" fill="#d97706" />
+      <rect x="8" y="18" width="8" height="2" rx="1" fill="url(#g-amber)" />
+    </symbol>
+
+    <symbol id="ico-star" viewBox="0 0 24 24">
+      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
+        fill="url(#g-gold)" />
+    </symbol>
+
+    <symbol id="ico-pin" viewBox="0 0 24 24">
+      <path
+        d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"
+        fill="url(#g-amber)" />
+    </symbol>
+
+    <symbol id="ico-phone" viewBox="0 0 24 24">
+      <path
+        d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 00-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"
+        fill="url(#g-amber)" />
+    </symbol>
+
+    <symbol id="ico-clock" viewBox="0 0 24 24">
+      <path
+        d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM16.23 15.26l-4.73-2.82V7h1.5v4.54l3.98 2.37-.75 1.35z"
+        fill="url(#g-amber)" />
+    </symbol>
+
+    <symbol id="ico-camera" viewBox="0 0 24 24">
+      <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2v11z" fill="url(#g-amber)" />
+      <circle cx="12" cy="13" r="4" fill="#fef3c7" />
+      <circle cx="12" cy="13" r="2.5" fill="#d97706" />
+    </symbol>
+  </svg>
+
+
+  <!-- LOADER -->
+  <div id="loader">
+    <div class="loader-brand">SMASH & CO.</div>
+    <div class="loader-bar-wrap">
+      <div id="loader-bar"></div>
+    </div>
+    <div id="loader-percent">0%</div>
+  </div>
+
+  <!-- FIXED HEADER -->
+  <header class="site-header" id="site-header">
+    <nav>
+      <a href="#" class="nav-logo"><svg class="ico ico-inline">
+          <use href="#ico-burger" />
+        </svg> SMASH &amp; CO.</a>
+      <ul class="nav-links">
+        <li><a href="#">Inicio</a></li>
+        <li><a href="#menu-section">Menú</a></li>
+        <li><a href="#menu-section">Especialidades</a></li>
+        <li><a href="#resenas-section">Reseñas</a></li>
+        <li><a href="#contacto-section">Contacto</a></li>
+      </ul>
+      <a href="#ordena" class="nav-cta">ORDENAR AHORA</a>
+    </nav>
+  </header>
+
+  <!-- CANVAS -->
+  <div class="canvas-wrap">
+    <canvas id="canvas"></canvas>
+  </div>
+
+  <!-- HERO OVERLAY (fixed, outside scroll container) -->
+  <div id="hero-overlay">
+    <div class="hero-content">
+      <div class="hero-label">001 / Burger Experience</div>
+      <h1 class="hero-heading">
+        <span class="hero-word">SMASH</span>
+        <span class="hero-word hero-amp">&</span>
+        <span class="hero-word">CO.</span>
+      </h1>
+      <p class="hero-tagline">Crafted with obsession</p>
+      <div class="scroll-indicator">
+        <span class="scroll-line"></span>
+        <span class="scroll-text">SCROLL</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTIONS OVERLAY (002–004 dark tint) -->
+  <div id="sections-overlay"></div>
+
+  <!-- DARK OVERLAY -->
+  <div id="dark-overlay"></div>
+
+
+  <!-- SCROLL CONTAINER -->
+  <div id="scroll-container">
+
+    <!-- SECCIÓN 1: La Burger — align-right, slide-right -->
+    <section id="la-burger" class="scroll-section section-content align-right" data-enter="12" data-leave="22"
+      data-animation="slide-right">
+      <div class="section-inner">
+        <span class="section-label">002 / La Burger</span>
+        <h2 class="section-heading">La Burger</h2>
+        <p class="section-body">
+          200 gramos de carne de res fresca, seleccionada y molida el mismo día.
+          Sin conservantes, sin rellenos. Solo carne real con el punto exacto de
+          sal y pimienta negra recién molida.
+        </p>
+        <p class="section-note">
+          Cada pieza pasa por control de calidad antes de llegar a la plancha.
+        </p>
+      </div>
+    </section>
+
+    <!-- SECCIÓN 2: El Smash — align-left, slide-left -->
+    <section id="el-smash" class="scroll-section section-content align-left" data-enter="24" data-leave="34"
+      data-animation="slide-left">
+      <div class="section-inner">
+        <span class="section-label">003 / La Técnica</span>
+        <h2 class="section-heading">El Smash</h2>
+        <p class="section-body">
+          La técnica smash consiste en aplastar la bola de carne contra una
+          plancha de hierro fundido a 250°C en el momento exacto. Esto genera
+          la reacción de Maillard: una costra dorada, crujiente y llena de sabor
+          que ninguna burger convencional puede igualar.
+        </p>
+        <p class="section-note">
+          La diferencia está en la costra. La costra está en la técnica.
+        </p>
+      </div>
+    </section>
+
+    <!-- SECCIÓN 3: Stats — centrado, dark overlay, stagger-up -->
+    <section class="scroll-section section-stats" data-enter="36" data-leave="46" data-animation="stagger-up">
+      <div class="stats-grid">
+        <div class="stat">
+          <div class="stat-number-wrap">
+            <span class="stat-number" data-value="200" data-decimals="0">0</span>
+            <span class="stat-suffix">g</span>
+          </div>
+          <span class="stat-label">de carne fresca</span>
+        </div>
+        <div class="stat stat-divider">
+          <div class="stat-number-wrap">
+            <span class="stat-plus">+</span>
+            <span class="stat-number" data-value="8" data-decimals="0">0</span>
+          </div>
+          <span class="stat-label">ingredientes premium</span>
+        </div>
+        <div class="stat">
+          <div class="stat-number-wrap">
+            <span class="stat-number" data-value="1" data-decimals="0">0</span>
+          </div>
+          <span class="stat-label">sola obsesión</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECCIÓN 4: Ordena Ahora — CTA, blur-up, persist -->
+    <section id="ordena" class="scroll-section section-cta" data-enter="48" data-leave="99" data-animation="blur-up"
+      data-persist="true">
+      <div class="section-inner cta-inner">
+        <span class="section-label">004 / Ordena</span>
+        <h2 class="section-heading cta-heading">Ordena<br />Ahora</h2>
+        <p class="section-body cta-body">
+          Sin esperas. Sin excusas. La mejor smash burger de la ciudad
+          está a un clic de distancia.
+        </p>
+        <a href="#" class="cta-button">Hacer mi pedido</a>
+      </div>
+    </section>
+
+  </div><!-- /#scroll-container -->
+
+  <!-- ═══════════════════════════════════════════
+       CONTENIDO ESTÁTICO (flujo normal, cubre canvas)
+  ════════════════════════════════════════════════ -->
+  <div id="site-content">
+
+    <!-- ── MENÚ: HAMBURGUESAS ───────────────────── -->
+    <section id="menu-section" class="static-section">
+      <div class="static-section-header">
+        <span class="static-label">NUESTRO MENÚ</span>
+        <h2 class="static-title">HAMBURGUESAS</h2>
+        <p class="static-desc">Pasa el cursor sobre cada hamburguesa para ver sus deliciosos ingredientes</p>
+      </div>
+
+      <div class="burger-grid">
+
+        <!-- La Hawaiana -->
+        <div class="burger-card">
+          <div class="burger-visual">
+            <img class="burger-photo"
+              src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=600&h=280&fit=crop&q=80"
+              alt="La Hawaiana" loading="lazy">
+            <div class="explode-stack">
+              <div class="el"><span class="el-icon"><svg class="ico">
+                    <use href="#ico-bread" />
+                  </svg></span><span class="el-lbl">Pan Brioche</span></div>
+              <div class="el"><span class="el-icon"><svg class="ico">
+                    <use href="#ico-pineapple" />
+                  </svg></span><span class="el-lbl">Piña Caramelizada</span></div>
+              <div class="el"><span class="el-icon"><svg class="ico">
+                    <use href="#ico-cheese" />
+                  </svg></span><span class="el-lbl">Queso Cheddar</span></div>
+              <div class="el"><span class="el-icon"><svg class="ico">
+                    <use href="#ico-bacon" />
+                  </svg></span><span class="el-lbl">Tocino Crujiente</span></div>
+              <div class="el"><span class="el-icon"><svg class="ico">
+                    <use href="#ico-meat" />
+                  </svg></span><span class="el-lbl">Carne Smash 200g</span></div>
+              <div class="el"><span class="el-icon"><svg class="ico">
+                    <use href="#ico-tomato" />
+                  </svg></span><span class="el-lbl">Tomate Fresco</span></div>
+              <div class="el"><span class="el-icon"><svg class="ico">
+                    <use href="#ico-lettuce" />
+                  </svg></span><span class="el-lbl">Lechuga</span></div>
+              <div class="el"><span class="el-icon"><svg class="ico">
+                    <use href="#ico-bread" />
+                  </svg></span><span class="el-lbl">Pan Brioche</span></div>
+            </div>
+            <div class="explode-hint">Pasa el cursor</div>
+          </div>
+          <div class="burger-info">
+            <div class="burger-card-top">
+              <span class="burger-badge popular"><svg class="ico ico-badge">
+                  <use href="#ico-trophy" />
+                </svg> POPULAR</span>
+              <span class="burger-price">$260</span>
+            </div>
+            <h3 class="burger-name">La Hawaiana</h3>
+            <div class="burger-tags">
+              <span class="burger-tag">Dulce</span>
+              <span class="burger-tag">Crujiente</span>
+            </div>
+            <button class="btn-agregar">AGREGAR</button>
+          </div>
+        </div>
+
+        <!-- La Clásica -->
+        <div class="burger-card">
+          <div class="burger-visual">
+            <img class="burger-photo"
+              src="https://images.unsplash.com/photo-1550547660-d9450f859349?w=600&h=280&fit=crop&q=80" alt="La Clásica"
+              loading="lazy">
+            <div class="explode-stack">
+              <div class="el"><span class="el-icon"><svg class="ico">
+                    <use href="#ico-bread" />
+                  </svg></span><span class="el-lbl">Pan Brioche</span></div>
+              <div class="el"><span class="el-icon"><svg class="ico">
+                    <use href="#ico-onion" />
+                  </svg></span><span class="el-lbl">Cebolla Fresca</span></div>
+              <div class="el"><span class="el-icon"><svg class="ico">
+                    <use href="#ico-pickle" />
+                  </svg></span><span class="el-lbl">Pepinillos</span></div>
+              <div class="el"><span class="el-icon"><svg class="ico">
+                    <use href="#ico-tomato" />
+                  </svg></span><span class="el-lbl">Tomate & Lechuga</span></div>
+              <div class="el"><span class="el-icon"><svg class="ico">
+                    <use href="#ico-meat" />
+                  </svg></span><span class="el-lbl">Carne Smash 200g</span></div>
+              <div class="el"><span class="el-icon"><svg class="ico">
+                    <use href="#ico-cheese" />
+                  </svg></span><span class="el-lbl">Queso Americano</span></div>
+              <div class="el"><span class="el-icon"><svg class="ico">
+                    <use href="#ico-bread" />
+                  </svg></span><span class="el-lbl">Pan Brioche</span></div>
+            </div>
+            <div class="explode-hint">Pasa el cursor</div>
+          </div>
+          <div class="burger-info">
+            <div class="burger-card-top">
+              <span class="burger-badge">Clásica</span>
+              <span class="burger-price">$220</span>
+            </div>
+            <h3 class="burger-name">La Clásica</h3>
+            <div class="burger-tags">
+              <span class="burger-tag">Clásica</span>
+            </div>
+            <button class="btn-agregar">AGREGAR</button>
+          </div>
+        </div>
+
+        <!-- BBQ Smokey -->
+        <div class="burger-card">
+          <div class="burger-visual">
+            <img class="burger-photo"
+              src="https://images.unsplash.com/photo-1553979459-d2229ba7433b?w=600&h=280&fit=crop&q=80" alt="BBQ Smokey"
+              loading="lazy">
+            <div class="explode-stack">
+              <div class="el"><span class="el-icon"><svg class="ico">
+                    <use href="#ico-bread" />
+                  </svg></span><span class="el-lbl">Pan Brioche</span></div>
+              <div class="el"><span class="el-icon"><svg class="ico">
+                    <use href="#ico-onion" />
+                  </svg></span><span class="el-lbl">Aros de Cebolla</span></div>
+              <div class="el"><span class="el-icon"><svg class="ico">
+                    <use href="#ico-sauce" />
+                  </svg></span><span class="el-lbl">Salsa BBQ Ahumada</span></div>
+              <div class="el"><span class="el-icon"><svg class="ico">
+                    <use href="#ico-cheese" />
+                  </svg></span><span class="el-lbl">Doble Queso Cheddar</span></div>
+              <div class="el"><span class="el-icon"><svg class="ico">
+                    <use href="#ico-meat" />
+                  </svg></span><span class="el-lbl">Carne Smash 200g</span></div>
+              <div class="el"><span class="el-icon"><svg class="ico">
+                    <use href="#ico-bacon" />
+                  </svg></span><span class="el-lbl">Tocino BBQ</span></div>
+              <div class="el"><span class="el-icon"><svg class="ico">
+                    <use href="#ico-bread" />
+                  </svg></span><span class="el-lbl">Pan Brioche</span></div>
+            </div>
+            <div class="explode-hint">Pasa el cursor</div>
+          </div>
+          <div class="burger-info">
+            <div class="burger-card-top">
+              <span class="burger-badge popular"><svg class="ico ico-badge">
+                  <use href="#ico-trophy" />
+                </svg> POPULAR</span>
+              <span class="burger-price">$300</span>
+            </div>
+            <h3 class="burger-name">BBQ Smokey</h3>
+            <div class="burger-tags">
+              <span class="burger-tag">Ahumada</span>
+              <span class="burger-tag">Picante</span>
+            </div>
+            <button class="btn-agregar">AGREGAR</button>
+          </div>
+        </div>
+
+        <!-- Green Power -->
+        <div class="burger-card">
+          <div class="burger-visual">
+            <img class="burger-photo"
+              src="https://images.unsplash.com/photo-1520072959219-c595dc870360?w=600&h=280&fit=crop&q=80"
+              alt="Green Power" loading="lazy">
+            <div class="explode-stack">
+              <div class="el"><span class="el-icon"><svg class="ico">
+                    <use href="#ico-bread" />
+                  </svg></span><span class="el-lbl">Pan Integral</span></div>
+              <div class="el"><span class="el-icon"><svg class="ico">
+                    <use href="#ico-avocado" />
+                  </svg></span><span class="el-lbl">Aguacate Fresco</span></div>
+              <div class="el"><span class="el-icon"><svg class="ico">
+                    <use href="#ico-bellpepper" />
+                  </svg></span><span class="el-lbl">Vegetales Asados</span></div>
+              <div class="el"><span class="el-icon"><svg class="ico">
+                    <use href="#ico-plant" />
+                  </svg></span><span class="el-lbl">Hamburguesa de Lentejas</span></div>
+              <div class="el"><span class="el-icon"><svg class="ico">
+                    <use href="#ico-tomato" />
+                  </svg></span><span class="el-lbl">Tomate Cherry</span></div>
+              <div class="el"><span class="el-icon"><svg class="ico">
+                    <use href="#ico-lettuce" />
+                  </svg></span><span class="el-lbl">Lechuga Mixta</span></div>
+              <div class="el"><span class="el-icon"><svg class="ico">
+                    <use href="#ico-bread" />
+                  </svg></span><span class="el-lbl">Pan Integral</span></div>
+            </div>
+            <div class="explode-hint">Pasa el cursor</div>
+          </div>
+          <div class="burger-info">
+            <div class="burger-card-top">
+              <span class="burger-badge">Veggie</span>
+              <span class="burger-price">$240</span>
+            </div>
+            <h3 class="burger-name">Green Power</h3>
+            <div class="burger-tags">
+              <span class="burger-tag">Vegetariana</span>
+              <span class="burger-tag">Saludable</span>
+            </div>
+            <button class="btn-agregar">AGREGAR</button>
+          </div>
+        </div>
+
+        <!-- Doble Impacto -->
+        <div class="burger-card">
+          <div class="burger-visual">
+            <img class="burger-photo"
+              src="https://images.unsplash.com/photo-1586816001966-79b736744398?w=600&h=280&fit=crop&q=80"
+              alt="Doble Impacto" loading="lazy">
+            <div class="explode-stack">
+              <div class="el"><span class="el-icon"><svg class="ico">
+                    <use href="#ico-bread" />
+                  </svg></span><span class="el-lbl">Pan Brioche XL</span></div>
+              <div class="el"><span class="el-icon"><svg class="ico">
+                    <use href="#ico-cheese" />
+                  </svg></span><span class="el-lbl">Queso Cheddar</span></div>
+              <div class="el"><span class="el-icon"><svg class="ico">
+                    <use href="#ico-meat" />
+                  </svg></span><span class="el-lbl">Carne Smash 200g</span></div>
+              <div class="el"><span class="el-icon"><svg class="ico">
+                    <use href="#ico-cheese" />
+                  </svg></span><span class="el-lbl">Queso Cheddar</span></div>
+              <div class="el"><span class="el-icon"><svg class="ico">
+                    <use href="#ico-meat" />
+                  </svg></span><span class="el-lbl">Carne Smash 200g</span></div>
+              <div class="el"><span class="el-icon"><svg class="ico">
+                    <use href="#ico-bacon" />
+                  </svg></span><span class="el-lbl">Tocino Extra</span></div>
+              <div class="el"><span class="el-icon"><svg class="ico">
+                    <use href="#ico-onion" />
+                  </svg></span><span class="el-lbl">Cebolla Caramelizada</span></div>
+              <div class="el"><span class="el-icon"><svg class="ico">
+                    <use href="#ico-bread" />
+                  </svg></span><span class="el-lbl">Pan Brioche XL</span></div>
+            </div>
+            <div class="explode-hint">Pasa el cursor</div>
+          </div>
+          <div class="burger-info">
+            <div class="burger-card-top">
+              <span class="burger-badge popular"><svg class="ico ico-badge">
+                  <use href="#ico-trophy" />
+                </svg> POPULAR</span>
+              <span class="burger-price">$340</span>
+            </div>
+            <h3 class="burger-name">Doble Impacto</h3>
+            <div class="burger-tags">
+              <span class="burger-tag">XL</span>
+              <span class="burger-tag">Favorita</span>
+            </div>
+            <button class="btn-agregar">AGREGAR</button>
+          </div>
+        </div>
+
+        <!-- La Mexicana -->
+        <div class="burger-card">
+          <div class="burger-visual">
+            <img class="burger-photo"
+              src="https://images.unsplash.com/photo-1565299507177-b0ac66763828?w=600&h=280&fit=crop&q=80"
+              alt="La Mexicana" loading="lazy">
+            <div class="explode-stack">
+              <div class="el"><span class="el-icon"><svg class="ico">
+                    <use href="#ico-bread" />
+                  </svg></span><span class="el-lbl">Pan Brioche</span></div>
+              <div class="el"><span class="el-icon"><svg class="ico">
+                    <use href="#ico-sauce" />
+                  </svg></span><span class="el-lbl">Salsa Chipotle</span></div>
+              <div class="el"><span class="el-icon"><svg class="ico">
+                    <use href="#ico-avocado" />
+                  </svg></span><span class="el-lbl">Guacamole Fresco</span></div>
+              <div class="el"><span class="el-icon"><svg class="ico">
+                    <use href="#ico-chili" />
+                  </svg></span><span class="el-lbl">Jalapeños Picantes</span></div>
+              <div class="el"><span class="el-icon"><svg class="ico">
+                    <use href="#ico-meat" />
+                  </svg></span><span class="el-lbl">Carne Smash 200g</span></div>
+              <div class="el"><span class="el-icon"><svg class="ico">
+                    <use href="#ico-cheese" />
+                  </svg></span><span class="el-lbl">Queso Pepper Jack</span></div>
+              <div class="el"><span class="el-icon"><svg class="ico">
+                    <use href="#ico-onion" />
+                  </svg></span><span class="el-lbl">Cebolla Morada</span></div>
+              <div class="el"><span class="el-icon"><svg class="ico">
+                    <use href="#ico-bread" />
+                  </svg></span><span class="el-lbl">Pan Brioche</span></div>
+            </div>
+            <div class="explode-hint">Pasa el cursor</div>
+          </div>
+          <div class="burger-info">
+            <div class="burger-card-top">
+              <span class="burger-badge">Especial</span>
+              <span class="burger-price">$280</span>
+            </div>
+            <h3 class="burger-name">La Mexicana</h3>
+            <div class="burger-tags">
+              <span class="burger-tag">Picante</span>
+              <span class="burger-tag">Especial</span>
+            </div>
+            <button class="btn-agregar">AGREGAR</button>
+          </div>
+        </div>
+
+      </div><!-- /.burger-grid -->
+    </section>
+
+    <!-- ── ACOMPAÑANTES ──────────────────────────── -->
+    <section id="acompanantes-section" class="static-section static-section--alt">
+      <div class="static-section-header">
+        <span class="static-label">ACOMPAÑANTES</span>
+        <h2 class="static-title">COMPLEMENTOS</h2>
+        <p class="static-desc">El complemento perfecto para tu hamburguesa favorita</p>
+      </div>
+
+      <div class="sides-grid">
+        <div class="side-card">
+          <div class="side-img-wrap">
+            <img class="side-img"
+              src="https://images.unsplash.com/photo-1630384060421-cb20d0e0649d?w=500&h=220&fit=crop&q=80"
+              alt="Papas Fritas" loading="lazy">
+          </div>
+          <div class="side-body-wrap">
+            <h4 class="side-name">Papas Fritas</h4>
+            <p class="side-body">Crujientes por fuera, suaves por dentro</p>
+            <span class="side-price">$100</span>
+          </div>
+        </div>
+        <div class="side-card">
+          <div class="side-img-wrap">
+            <img class="side-img"
+              src="https://images.unsplash.com/photo-1548340748-6d2b7d7da280?w=500&h=220&fit=crop&q=80"
+              alt="Dedos de Queso" loading="lazy">
+          </div>
+          <div class="side-body-wrap">
+            <h4 class="side-name">Dedos de Queso</h4>
+            <p class="side-body">Mozzarella derretida cubierta de pan rallado dorado</p>
+            <span class="side-price">$140</span>
+          </div>
+        </div>
+        <div class="side-card">
+          <div class="side-img-wrap">
+            <img class="side-img"
+              src="https://images.unsplash.com/photo-1639024471283-03518883512d?w=500&h=220&fit=crop&q=80"
+              alt="Aros de Cebolla" loading="lazy">
+          </div>
+          <div class="side-body-wrap">
+            <h4 class="side-name">Aros de Cebolla</h4>
+            <p class="side-body">Aros perfectamente fritos con nuestra mezcla secreta</p>
+            <span class="side-price">$120</span>
+          </div>
+        </div>
+        <div class="side-card">
+          <div class="side-img-wrap">
+            <img class="side-img"
+              src="https://images.unsplash.com/photo-1562802378-063ec186a863?w=500&h=220&fit=crop&q=80"
+              alt="Chicken Nuggets" loading="lazy">
+          </div>
+          <div class="side-body-wrap">
+            <h4 class="side-name">Chicken Nuggets</h4>
+            <p class="side-body">Trozos de pollo 100% pechuga, crujientes y jugosos</p>
+            <span class="side-price">$160</span>
+          </div>
+        </div>
+        <div class="side-card">
+          <div class="side-img-wrap">
+            <img class="side-img"
+              src="https://images.unsplash.com/photo-1582169296194-e4d644c48063?w=500&h=220&fit=crop&q=80"
+              alt="Nachos Supreme" loading="lazy">
+          </div>
+          <div class="side-body-wrap">
+            <h4 class="side-name">Nachos Supreme</h4>
+            <p class="side-body">Totopos con queso fundido, guacamole, crema y jalapeños</p>
+            <span class="side-price">$180</span>
+          </div>
+        </div>
+        <div class="side-card">
+          <div class="side-img-wrap">
+            <img class="side-img"
+              src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=500&h=220&fit=crop&q=80"
+              alt="Ensalada Fresca" loading="lazy">
+          </div>
+          <div class="side-body-wrap">
+            <h4 class="side-name">Ensalada Fresca</h4>
+            <p class="side-body">Mix de lechugas, tomate cherry, zanahoria y aderezo ranch</p>
+            <span class="side-price">$120</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── BEBIDAS ────────────────────────────────── -->
+    <section id="bebidas-section" class="static-section">
+      <div class="static-section-header">
+        <span class="static-label">REFRÉSCATE</span>
+        <h2 class="static-title">BEBIDAS</h2>
+        <p class="static-desc">Desde sodas clásicas hasta malteadas artesanales</p>
+      </div>
+
+      <div class="drinks-grid">
+        <div class="drink-card">
+          <div class="drink-img-wrap">
+            <img class="drink-img"
+              src="https://images.unsplash.com/photo-1554866585-cd94860890b7?w=400&h=200&fit=crop&q=80" alt="Coca-Cola"
+              loading="lazy">
+          </div>
+          <span class="drink-name">Coca-Cola</span>
+          <span class="drink-price">$60</span>
+        </div>
+        <div class="drink-card">
+          <div class="drink-img-wrap">
+            <img class="drink-img"
+              src="https://images.unsplash.com/photo-1625772299848-391b6a87d7b3?w=400&h=200&fit=crop&q=80" alt="Sprite"
+              loading="lazy">
+          </div>
+          <span class="drink-name">Sprite</span>
+          <span class="drink-price">$60</span>
+        </div>
+        <div class="drink-card">
+          <div class="drink-img-wrap">
+            <img class="drink-img"
+              src="https://images.unsplash.com/photo-1624517452488-04869289c4ca?w=400&h=200&fit=crop&q=80" alt="Fanta"
+              loading="lazy">
+          </div>
+          <span class="drink-name">Fanta</span>
+          <span class="drink-price">$60</span>
+        </div>
+        <div class="drink-card">
+          <div class="drink-img-wrap">
+            <img class="drink-img"
+              src="https://images.unsplash.com/photo-1621263764928-df1444c5e859?w=400&h=200&fit=crop&q=80"
+              alt="Limonada" loading="lazy">
+          </div>
+          <span class="drink-name">Limonada</span>
+          <span class="drink-price">$80</span>
+        </div>
+        <div class="drink-card">
+          <div class="drink-img-wrap">
+            <img class="drink-img"
+              src="https://images.unsplash.com/photo-1541658016709-82535e94bc69?w=400&h=200&fit=crop&q=80"
+              alt="Malteada Chocolate" loading="lazy">
+          </div>
+          <span class="drink-name">Malteada Chocolate</span>
+          <span class="drink-price">$120</span>
+        </div>
+        <div class="drink-card">
+          <div class="drink-img-wrap">
+            <img class="drink-img"
+              src="https://images.unsplash.com/photo-1611928237590-087afc90c6fd?w=400&h=200&fit=crop&q=80"
+              alt="Malteada Fresa" loading="lazy">
+          </div>
+          <span class="drink-name">Malteada Fresa</span>
+          <span class="drink-price">$120</span>
+        </div>
+        <div class="drink-card">
+          <div class="drink-img-wrap">
+            <img class="drink-img"
+              src="https://images.unsplash.com/photo-1653122025451-ec76a73f8a08?w=400&h=200&fit=crop&q=80"
+              alt="Malteada Vainilla" loading="lazy">
+          </div>
+          <span class="drink-name">Malteada Vainilla</span>
+          <span class="drink-price">$120</span>
+        </div>
+        <div class="drink-card">
+          <div class="drink-img-wrap">
+            <img class="drink-img"
+              src="https://images.unsplash.com/photo-1535958636474-b021ee887b13?w=400&h=200&fit=crop&q=80"
+              alt="Cerveza Artesanal" loading="lazy">
+          </div>
+          <span class="drink-name">Cerveza Artesanal</span>
+          <span class="drink-price">$140</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── RESEÑAS ────────────────────────────────── -->
+    <section id="resenas-section" class="static-section static-section--alt">
+      <div class="static-section-header">
+        <span class="static-label">OPINIONES</span>
+        <h2 class="static-title">RESEÑAS</h2>
+        <p class="static-desc">Lo que dicen nuestros clientes sobre nosotros</p>
+      </div>
+
+      <div class="reviews-grid">
+
+        <div class="review-card">
+          <div class="review-header">
+            <div class="review-avatar">CM</div>
+            <div class="review-meta">
+              <span class="review-name">Carlos Martínez</span>
+              <span class="review-time">Hace 2 días</span>
+            </div>
+          </div>
+          <div class="review-stars"><svg class="ico ico-star-review">
+              <use href="#ico-star" />
+            </svg><svg class="ico ico-star-review">
+              <use href="#ico-star" />
+            </svg><svg class="ico ico-star-review">
+              <use href="#ico-star" />
+            </svg><svg class="ico ico-star-review">
+              <use href="#ico-star" />
+            </svg><svg class="ico ico-star-review">
+              <use href="#ico-star" />
+            </svg></div>
+          <p class="review-text">"La mejor hamburguesa que he probado en mi vida. La Hawaiana es una explosión de
+            sabores increíble."</p>
+          <span class="review-ordered">Ordenó: La Hawaiana</span>
+        </div>
+
+        <div class="review-card">
+          <div class="review-header">
+            <div class="review-avatar">MR</div>
+            <div class="review-meta">
+              <span class="review-name">María Rodríguez</span>
+              <span class="review-time">Hace 1 semana</span>
+            </div>
+          </div>
+          <div class="review-stars"><svg class="ico ico-star-review">
+              <use href="#ico-star" />
+            </svg><svg class="ico ico-star-review">
+              <use href="#ico-star" />
+            </svg><svg class="ico ico-star-review">
+              <use href="#ico-star" />
+            </svg><svg class="ico ico-star-review">
+              <use href="#ico-star" />
+            </svg><svg class="ico ico-star-review">
+              <use href="#ico-star" />
+            </svg></div>
+          <p class="review-text">"El servicio es excelente y la comida llega super rápido. Los dedos de queso son
+            adictivos!"</p>
+          <span class="review-ordered">Ordenó: BBQ Smokey + Dedos de Queso</span>
+        </div>
+
+        <div class="review-card">
+          <div class="review-header">
+            <div class="review-avatar">JP</div>
+            <div class="review-meta">
+              <span class="review-name">Juan Pérez</span>
+              <span class="review-time">Hace 2 semanas</span>
+            </div>
+          </div>
+          <div class="review-stars"><svg class="ico ico-star-review">
+              <use href="#ico-star" />
+            </svg><svg class="ico ico-star-review">
+              <use href="#ico-star" />
+            </svg><svg class="ico ico-star-review">
+              <use href="#ico-star" />
+            </svg><svg class="ico ico-star-review">
+              <use href="#ico-star" />
+            </svg></div>
+          <p class="review-text">"Muy buenas hamburguesas, la Doble Impacto es perfecta para los más hambrientos."</p>
+          <span class="review-ordered">Ordenó: Doble Impacto</span>
+        </div>
+
+      </div>
+
+      <!-- Formulario de reseña (sin tag form) -->
+      <div class="review-form-wrap">
+        <h3 class="review-form-title">DEJA TU RESEÑA</h3>
+        <div class="review-form">
+          <div class="rf-row rf-row--2">
+            <div class="rf-field">
+              <label class="rf-label">Tu nombre</label>
+              <input type="text" class="rf-input" placeholder="ej. Ana García" />
+            </div>
+            <div class="rf-field">
+              <label class="rf-label">¿Qué ordenaste?</label>
+              <input type="text" class="rf-input" placeholder="ej. La Hawaiana + Papas" />
+            </div>
+          </div>
+          <div class="rf-field">
+            <label class="rf-label">Calificación</label>
+            <div class="rf-stars" id="rf-stars">
+              <span class="rf-star" data-val="1"><svg class="ico ico-star-form">
+                  <use href="#ico-star" />
+                </svg></span>
+              <span class="rf-star" data-val="2"><svg class="ico ico-star-form">
+                  <use href="#ico-star" />
+                </svg></span>
+              <span class="rf-star" data-val="3"><svg class="ico ico-star-form">
+                  <use href="#ico-star" />
+                </svg></span>
+              <span class="rf-star" data-val="4"><svg class="ico ico-star-form">
+                  <use href="#ico-star" />
+                </svg></span>
+              <span class="rf-star" data-val="5"><svg class="ico ico-star-form">
+                  <use href="#ico-star" />
+                </svg></span>
+            </div>
+          </div>
+          <div class="rf-field">
+            <label class="rf-label">Tu comentario</label>
+            <textarea class="rf-input rf-textarea" placeholder="Cuéntanos tu experiencia..."></textarea>
+          </div>
+          <div class="rf-field">
+            <label class="rf-label">Foto de tu pedido (opcional)</label>
+            <div class="rf-file-wrap">
+              <input type="file" id="rf-photo" class="rf-file-input" accept="image/*">
+              <label for="rf-photo" class="rf-file-label"><svg class="ico ico-small">
+                  <use href="#ico-camera" />
+                </svg> Subir foto</label>
+              <span class="rf-file-name" id="rf-file-name">Ningún archivo seleccionado</span>
+            </div>
+            <div class="rf-preview-wrap" id="rf-preview-wrap" style="display:none">
+              <img id="rf-preview-img" class="rf-preview-img" src="" alt="preview">
+              <span class="rf-remove-photo" id="rf-remove-photo">✕ Quitar</span>
+            </div>
+          </div>
+          <div class="rf-submit" id="rf-submit">ENVIAR RESEÑA</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── CONTACTO ───────────────────────────────── -->
+    <section id="contacto-section" class="static-section">
+      <div class="static-section-header">
+        <span class="static-label">VISÍTANOS</span>
+        <h2 class="static-title">CONTACTO</h2>
+      </div>
+
+      <div class="contact-grid">
+        <div class="contact-card">
+          <span class="contact-icon"><svg class="ico ico-contact">
+              <use href="#ico-pin" />
+            </svg></span>
+          <h4 class="contact-title">Ubicación</h4>
+          <p class="contact-body">Av. Principal #123, Centro Comercial Plaza,<br />Ciudad, CP 12345</p>
+        </div>
+        <div class="contact-card">
+          <span class="contact-icon"><svg class="ico ico-contact">
+              <use href="#ico-phone" />
+            </svg></span>
+          <h4 class="contact-title">Teléfono</h4>
+          <p class="contact-body">+1 (555) 123-4567<br /><span class="contact-muted">Pedidos: +1 (555) 123-4568</span>
+          </p>
+        </div>
+        <div class="contact-card">
+          <span class="contact-icon"><svg class="ico ico-contact">
+              <use href="#ico-clock" />
+            </svg></span>
+          <h4 class="contact-title">Horario</h4>
+          <p class="contact-body">Lun–Jue: 11:00–22:00<br />Vie–Sáb: 11:00–00:00<br />Dom: 12:00–21:00</p>
+        </div>
+      </div>
+
+      <!-- Mapa interactivo -->
+      <div class="map-wrap">
+        <div class="map-label">
+          <svg class="ico ico-contact" style="vertical-align:middle;margin-right:6px;">
+            <use href="#ico-pin" />
+          </svg>
+          Encuéntranos aquí
+        </div>
+        <div id="contact-map"></div>
+      </div>
+    </section>
+
+    <!-- ── FOOTER ─────────────────────────────────── -->
+    <footer id="site-footer">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <span class="footer-logo"><svg class="ico ico-inline">
+              <use href="#ico-burger" />
+            </svg> SMASH &amp; CO.</span>
+          <p class="footer-tagline">Crafted with obsession since day one.<br />La mejor smash burger de la ciudad.</p>
+        </div>
+        <div class="footer-cols">
+          <div class="footer-col">
+            <h5 class="footer-col-title">Menú</h5>
+            <ul>
+              <li><a href="#menu-section">Hamburguesas</a></li>
+              <li><a href="#acompanantes-section">Acompañantes</a></li>
+              <li><a href="#bebidas-section">Bebidas</a></li>
+              <li><a href="#">Combos</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h5 class="footer-col-title">Info</h5>
+            <ul>
+              <li><a href="#contacto-section">Contacto</a></li>
+              <li><a href="#">Nosotros</a></li>
+              <li><a href="#">Trabaja con nosotros</a></li>
+              <li><a href="#">Franquicias</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2024 SMASH &amp; CO. Todos los derechos reservados.</span>
+      </div>
+    </footer>
+
+  </div><!-- /#site-content -->
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1/dist/lenis.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/ScrollTrigger.min.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    (function () {
+      // Coordenadas: Zócalo de Oaxaca de Juárez
+      var lat = 17.0665, lng = -96.7166;
+      var map = L.map('contact-map', { scrollWheelZoom: false }).setView([lat, lng], 16);
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+        maxZoom: 19
+      }).addTo(map);
+
+      var icon = L.divIcon({
+        className: '',
+        html: '<div style="background:linear-gradient(135deg,#f59e0b,#d97706);width:38px;height:38px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:3px solid #fff;box-shadow:0 4px 14px rgba(0,0,0,.5);"><div style="transform:rotate(45deg);display:flex;align-items:center;justify-content:center;height:100%;font-size:18px;">🍔</div></div>',
+        iconSize: [38, 38],
+        iconAnchor: [19, 38]
+      });
+
+      L.marker([lat, lng], { icon: icon })
+        .addTo(map)
+        .bindPopup('<strong>SMASH &amp; CO.</strong><br>Centro de Oaxaca, Oax.')
+        .openPopup();
+    })();
+  </script>
+</body>
+
+</html>
