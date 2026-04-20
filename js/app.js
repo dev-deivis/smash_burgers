@@ -247,8 +247,9 @@ function setupSectionAnimation(section) {
   const leave   = parseFloat(section.dataset.leave) / 100;
 
   // Position section at midpoint of enter/leave range
+  // Usa % para que escale con la altura real del contenedor (cambia por breakpoint)
   const midpoint = (enter + leave) / 2;
-  section.style.top = (midpoint * 300) + 'vh';
+  section.style.top = (midpoint * 100) + '%';
   section.style.transform = 'translateY(-50%)';
 
   const children = section.querySelectorAll(
@@ -256,7 +257,8 @@ function setupSectionAnimation(section) {
   );
 
   const tl = gsap.timeline({ paused: true });
-  const WINDOW = 0.08;
+  // En móvil se reduce la ventana de transición para evitar que secciones se encimen
+  const WINDOW = window.innerWidth <= 768 ? 0.035 : 0.08;
 
   switch (type) {
     case 'fade-up':
