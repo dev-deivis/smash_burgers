@@ -117,6 +117,15 @@ async function preloadFrames() {
 function initApp() {
   gsap.registerPlugin(ScrollTrigger);
 
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (reducedMotion) {
+    document.querySelectorAll('.scroll-section').forEach(s => s.classList.add('visible'));
+    document.getElementById('hero-overlay').style.opacity = '0';
+    initCounters();
+    return;
+  }
+
   // 1. Lenis smooth scroll
   const lenis = new Lenis({
     duration: 1.2,
@@ -462,6 +471,47 @@ function initCounters() {
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') closeMobileNav();
   });
+})();
+
+// ─── Touch interaction para burger cards ─────────────────────────────────────
+(function () {
+  const isTouch = () => 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+  if (!isTouch()) return;
+
+  document.querySelectorAll('.explode-hint').forEach(h => {
+    h.textContent = 'Toca para ver';
+  });
+
+  let activeCard = null;
+
+  document.querySelectorAll('.burger-card').forEach(card => {
+    let startX, startY;
+
+    card.addEventListener('touchstart', (e) => {
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+    }, { passive: true });
+
+    card.addEventListener('touchend', (e) => {
+      const dx = Math.abs(e.changedTouches[0].clientX - startX);
+      const dy = Math.abs(e.changedTouches[0].clientY - startY);
+      if (dx > 10 || dy > 10) return;
+
+      if (activeCard && activeCard !== card) {
+        activeCard.classList.remove('touch-active');
+      }
+      card.classList.toggle('touch-active');
+      activeCard = card.classList.contains('touch-active') ? card : null;
+    }, { passive: true });
+  });
+
+  document.addEventListener('touchend', (e) => {
+    if (!activeCard) return;
+    if (!activeCard.contains(e.target)) {
+      activeCard.classList.remove('touch-active');
+      activeCard = null;
+    }
+  }, { passive: true });
 })();
 
 // ─── Boot ─────────────────────────────────────────────────────────────────────
