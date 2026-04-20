@@ -195,7 +195,7 @@ function initHeroFade() {
 function initSectionsOverlay() {
   const overlay = document.getElementById('sections-overlay');
   const fadeRange = 0.03;
-  const enter = 0.12; // fade in just before section 002
+  const enter = 0.06; // fade in just before section 002
 
   ScrollTrigger.create({
     trigger: scrollContainer,
@@ -257,8 +257,7 @@ function setupSectionAnimation(section) {
   );
 
   const tl = gsap.timeline({ paused: true });
-  // En móvil se reduce la ventana de transición para evitar que secciones se encimen
-  const WINDOW = window.innerWidth <= 768 ? 0.035 : 0.08;
+  const WINDOW = 0.04;
 
   switch (type) {
     case 'fade-up':
