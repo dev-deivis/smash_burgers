@@ -7,6 +7,9 @@ const FRAME_SPEED = 1.5;
 const IMAGE_SCALE = 0.86;
 const frames = new Array(FRAME_COUNT).fill(null);
 
+const isMobile = () => window.innerWidth <= 768;
+const FRAMES_DIR = isMobile() ? 'frames_mobile' : 'frames';
+
 let currentFrame = 0;
 let bgColor = '#130800';
 
@@ -70,7 +73,7 @@ function loadFrame(index) {
       resolve();
     };
     img.onerror = resolve;
-    img.src = `frames/frame_${String(index + 1).padStart(4, '0')}.webp`;
+    img.src = `${FRAMES_DIR}/frame_${String(index + 1).padStart(4, '0')}.webp`;
   });
 }
 
@@ -423,6 +426,42 @@ function initCounters() {
       stars.forEach(s => s.classList.remove('active'));
     });
   }
+})();
+
+// ─── Hamburger menu ───────────────────────────────────────────────────────────
+(function () {
+  const hamburger = document.getElementById('nav-hamburger');
+  const mobileNav = document.getElementById('mobile-nav');
+  if (!hamburger || !mobileNav) return;
+
+  function closeMobileNav() {
+    hamburger.classList.remove('active');
+    hamburger.setAttribute('aria-expanded', 'false');
+    mobileNav.classList.remove('active');
+    mobileNav.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
+
+  hamburger.addEventListener('click', () => {
+    const isOpen = hamburger.classList.contains('active');
+    if (isOpen) {
+      closeMobileNav();
+    } else {
+      hamburger.classList.add('active');
+      hamburger.setAttribute('aria-expanded', 'true');
+      mobileNav.classList.add('active');
+      mobileNav.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    }
+  });
+
+  mobileNav.querySelectorAll('.mobile-nav-link').forEach(link => {
+    link.addEventListener('click', closeMobileNav);
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeMobileNav();
+  });
 })();
 
 // ─── Boot ─────────────────────────────────────────────────────────────────────
