@@ -16,8 +16,6 @@ let bgColor = '#130800';
 const canvas  = document.getElementById('canvas');
 const ctx     = canvas.getContext('2d');
 const loader  = document.getElementById('loader');
-const loaderBar     = document.getElementById('loader-bar');
-const loaderPercent = document.getElementById('loader-percent');
 const scrollContainer = document.getElementById('scroll-container');
 
 // ─── Canvas resize ────────────────────────────────────────────────────────────
@@ -84,30 +82,14 @@ async function preloadFrames() {
   await Promise.all(phase1);
   drawFrame(0);
 
-  // Phase 2: remaining frames with progress bar
-  let loaded = 10;
-  const updateProgress = () => {
-    const pct = Math.round((loaded / FRAME_COUNT) * 100);
-    loaderBar.style.width = pct + '%';
-    loaderPercent.textContent = pct + '%';
-  };
-  updateProgress();
-
+  // Phase 2: remaining frames
   const remaining = [];
   for (let i = 10; i < FRAME_COUNT; i++) {
-    remaining.push(
-      loadFrame(i).then(() => {
-        loaded++;
-        updateProgress();
-      })
-    );
+    remaining.push(loadFrame(i));
   }
   await Promise.all(remaining);
 
-  // All loaded — hide loader
-  loaderBar.style.width = '100%';
-  loaderPercent.textContent = '100%';
-  await new Promise(r => setTimeout(r, 300));
+  // All loaded — fade out loader over 2s
   loader.classList.add('hidden');
 
   initApp();
